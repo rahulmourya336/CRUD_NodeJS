@@ -1,0 +1,31 @@
+{
+  "name": "to-do-app",
+  "version": "0.0.0",
+  "scripts": {
+    "start": "ng serve && node src/www",
+    "build": "ng build",
+    "debug": "set deubg =* &nodemon app",
+    "eslint": "eslint app.js"
+  },
+  "private": true,
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "chalk": "^2.4.1",
+    "core-js": "^2.5.4",
+    "debug": "^3.1.0",
+    "ejs": "^2.6.1",
+    "eslint": "^5.5.0",
+    "express": "^4.16.3",
+    "lodash": "^4.17.10",
+    "materialize-css": "^1.0.0-rc.2",
+    "morgan": "^1.9.0",
+    "nodemon": "^1.18.4"
+  },
+  "nodemonConfig": {
+    "restartable": "rs",
+    "ignore": [
+      "node_modules/**/node_modules"
+    ],
+    "delay": "1500"
+  }
+}

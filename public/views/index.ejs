@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+  <h1>This works!</h1>
+
+<nav>
+  <div class="nav-wrapper">
+    <a href="#" class="brand-logo">90's Logo</a>
+    <ul id="nav-mobile" class="right hide-on-med-and-down">
+      <% for(let i = 0; i < nav.length; i++){ %>
+      <li>
+        <a href="<%=nav[i].link%>"><%=nav[i].title%></a>
+      </li>
+      <%}%>
+    </ul>
+  </div>
+</nav>
+
+
+
+</body>
+</html>
