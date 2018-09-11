@@ -112,6 +112,9 @@ router.route('/users/:id').get((req, res) => {
     res.send('No resource found')
   }
 })
+router.route('/users').get((req, res) => {
+  res.send(users);
+})
 app.post('/users', (req, res) => {
   const body = req.body;
   const bodyLength = Object.keys(req.body).length;
@@ -139,6 +142,12 @@ app.post('/users', (req, res) => {
     console.log("Schema not correct");
   }
 })
+app.put('/users', (req, res) => {
+  const body = req.body;
+  const id = body.id;
+  console.log(`PUT ID: ${id}`)
+  res.send(`This is PUT Method: ${id}`);
+}); // TODO: Complete PUT Request
 
 /* Trip APIs */
 router.route('/trip').get((req, res) => {
