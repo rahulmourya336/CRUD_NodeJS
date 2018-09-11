@@ -114,7 +114,9 @@ router.route('/users/:id').get((req, res) => {
 })
 app.post('/users', (req, res) => {
   const body = req.body;
-  if (body.length !== users.length) {
+  const bodyLength = Object.keys(req.body).length;
+  const userLength = Object.keys(users[0]).length;
+  if (bodyLength === userLength) {
     const id = body.id;
     const name = body.name;
     const email = body.email;
@@ -133,6 +135,7 @@ app.post('/users', (req, res) => {
     console.log(users)
   }
   else {
+    res.send("Invalid Schema")
     console.log("Schema not correct");
   }
 })
