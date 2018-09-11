@@ -1,18 +1,20 @@
+/* eslint-disable quote-props,comma-dangle,semi,quotes */
 /* Imports */
-var express = require('express')
-var chalk = require('chalk')
-var debug = require('debug')('app')
-var morgan = require('morgan')
-var path = require('path')
-var router = express.Router()
-var http = require('http')
-var _ = require('lodash')
-var bodyParser = require('body-parser')
+const express = require('express')
+const chalk = require('chalk')
+const debug = require('debug')('app')
+const morgan = require('morgan')
+
+const path = require('path')
+const router = express.Router()
+const http = require('http')
+const _ = require('lodash')
+const bodyParser = require('body-parser')
 
 /* Variable Declaration */
-var app = express()
-API = 'https://5b77ff72b859970014478529.mockapi.io/api/v1/'
-PORT = process.env.PORT || 4100
+const app = express()
+const API = 'https://5b77ff72b859970014478529.mockapi.io/api/v1/'
+const PORT = process.env.PORT || 4100
 app.use(morgan('tiny'))
 app.use(express.static(path.join(__dirname, '/public')))
 app.use('/css', express.static(
@@ -23,13 +25,13 @@ app.set('views', './public/views')
 app.set('view engine', 'ejs')
 
 app.use(bodyParser.json()) // support json encoded bodies
-app.use(bodyParser.urlencoded({extended: true})) // support encoded bodies
-var users = [
+app.use(bodyParser.urlencoded({ extended: true })) // support encoded bodies
+const users = [
   {
     'id': '1',
     'name': 'Adolf Trantow DVM',
-    'email': 'Gilbert.Beer34@hotmail.com',
-    'password': 'vVmr0eH6YwIqlMP',
+    'email': 'abc@abc.com',
+    'password': '123456',
     'contact': '415.707.9608 x26767'
   },
   {
@@ -42,8 +44,8 @@ var users = [
   {
     'id': '3',
     'name': 'Rex Kling',
-    'email': 'Eloy.Rau@yahoo.com',
-    'password': 'Yj1g_VY3pca2CXi',
+    'email': '_@abc.com',
+    'password': '123456',
     'contact': '896-546-3380'
   },
   {
@@ -54,7 +56,7 @@ var users = [
     'contact': '850-156-8006'
   }
 ]
-var trips = [
+const trips = [
   {
     'trip_id': '1',
     'trip_image': 'http://lorempixel.com/640/480/business',
@@ -82,67 +84,89 @@ var trips = [
 ]
 
 /* Method declaration */
-router.route('/users').get(function (req, res) {
-  res.send(users)
-})
-router.route('/users/:id').get(function (req, res) {
+/* sign-in APIs */
+app.post('/signin', (req, res) => {
+  const body = req.body;
+  const userEmail = body.email;
+  const userPassword = body.password;
+  const result = _.findIndex(users, { email: userEmail, password: userPassword });
+  if (result !== -1) {
+    res.send(`User found :\n ${JSON.stringify(users[result])}`);
+    console.log('User Found');
+  }
+  else {
+    res.send('User not found');
+    console.log('User not found');
+  }
+});
 
-  var id = req.params.id
-  var result = _.findIndex(users, {id: id})
-  console.log('Result output : ' + result)
+/* sign-up APIs */
+router.route('/users/:id').get((req, res) => {
+  const id = req.params.id
+  const result = _.findIndex(users, { id: id });
+  console.log(`Result output : ${result}`)
   if (result > -1) {
     res.send(users[result])
   }
   else {
     res.send('No resource found')
   }
+})
+app.post('/users', (req, res) => {
+  const body = req.body;
+  if (body.length !== users.length) {
+    const id = body.id;
+    const name = body.name;
+    const email = body.email;
+    const password = body.password;
+    const contact = body.contact;
 
+    const addUser = {
+      'id': id,
+      'name': name,
+      'email': email,
+      'password': password,
+      'contact': contact
+    }
+    users.push(addUser)
+    res.send('User added');
+    console.log(users)
+  }
+  else {
+    console.log("Schema not correct");
+  }
 })
 
-router.route('/trip').get(function (req, res) {
+/* Trip APIs */
+router.route('/trip').get((req, res) => {
   res.send(trips)
 })
-router.route('/trip/:id').get(function (req, res) {
-
-  var id = req.params.id
-  var result = _.findIndex(trips, {trip_id: id})
-  console.log('Result output : ' + result)
+router.route('/trip/:id').get((req, res) => {
+  const id = req.params.id
+  const result = _.findIndex(trips, { trip_id: id })
+  console.log(`Result output : ${result}`)
   if (result > -1) {
     res.send(trips[result])
-  }
+}
   else {
     res.send('No resource found')
   }
-
 })
-
-app.post('/users', function (req, res) {
-  var addUser = {
-    'id': '5',
-    'name': 'Trantow DVM',
-    'email': 'Beer34@hotmail.com',
-    'password': 'vqweqeqw',
-    'contact': '415.70726767'
+app.delete('/trip/:id', (req, res) => {
+  const id = req.params.id
+  if (_.findIndex(users, id)) {
+    const result = _.remove(trips, { trip_id: id })
+    console.log(`Del result : ${result}`)
+    console.log(trips)
+    res.send('Trip removed')
   }
-  users.push(addUser)
-  res.send("User added")
-  console.log(users)
-})
-
-app.delete('/users/:id', function (req, res) {
-var id = req.params.id
-var result = _.remove(users, {id:id})
-  if (typeof result === 'object') {
-    console.log('Del result : ' + result)
-    console.log(users)
-    res.send('user removed')
-  } else {
-    res.send('No user found')
+  else {
+    res.send('No trip found')
   }
 })
 
 app.use('/', router)
-app.use('/', function (req, res) {
+app.use('/', (req, res) => {
   res.render('index', {
     nav: [
       {
@@ -156,10 +180,10 @@ app.use('/', function (req, res) {
   })
 })
 
-app.use('/users', function (req, res) {
-  res.send(API + '/users')
+app.use('/users', (req, res) => {
+  res.send(`${API}/users`)
 })
 
-app.listen(PORT, function () {
-  console.log('Listening on port ' + chalk.green(PORT))
+app.listen(PORT, () => {
+  console.log(`Listening on port ${chalk.green(PORT)}`)
 })

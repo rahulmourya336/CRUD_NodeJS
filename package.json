@@ -1,6 +1,6 @@
 {
-  "name": "to-do-app",
-  "version": "0.0.0",
+  "name": "CRUD-NodeJS",
+  "version": "0.1.0",
   "scripts": {
     "start": "ng serve && node src/www",
     "build": "ng build",
@@ -27,5 +27,9 @@
       "node_modules/**/node_modules"
     ],
     "delay": "1500"
+  },
+  "devDependencies": {
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0"
   }
 }
