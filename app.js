@@ -1,12 +1,14 @@
-/* eslint-disable quote-props,comma-dangle,semi,quotes */
+/* eslint-disable quote-props,comma-dangle,semi,quotes,linebreak-style,no-console,require-await */
 /* Imports */
 const express = require('express')
 const chalk = require('chalk')
 const debug = require('debug')('app')
 const morgan = require('morgan')
+const { MongoClient } = require('mongodb')
 
 const path = require('path')
 const router = express.Router()
+const adminRouter = require('./public/routes/adminRouter')
 const http = require('http')
 const _ = require('lodash')
 const bodyParser = require('body-parser')
@@ -15,6 +17,7 @@ const bodyParser = require('body-parser')
 const app = express()
 const API = 'https://5b77ff72b859970014478529.mockapi.io/api/v1/'
 const PORT = process.env.PORT || 4100
+
 app.use(morgan('tiny'))
 app.use(express.static(path.join(__dirname, '/public')))
 app.use('/css', express.static(
@@ -24,8 +27,9 @@ app.use('/js',
 app.set('views', './public/views')
 app.set('view engine', 'ejs')
 
-app.use(bodyParser.json()) // support json encoded bodies
-app.use(bodyParser.urlencoded({ extended: true })) // support encoded bodies
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
+
 const users = [
   {
     'id': '1',
@@ -82,6 +86,11 @@ const trips = [
     'trip_Creator_id': 60
   }
 ]
+
+/* Database methods */
+const DBUrl = 'mongodb://localhost:27017'
+const DBName = 'testdb';
+
 
 /* Method declaration */
 /* sign-in APIs */
@@ -159,7 +168,7 @@ router.route('/trip/:id').get((req, res) => {
   console.log(`Result output : ${result}`)
   if (result > -1) {
     res.send(trips[result])
-}
+  }
   else {
     res.send('No resource found')
   }
@@ -177,6 +186,21 @@ app.delete('/trip/:id', (req, res) => {
   }
 })
 
+router.route('/admin').get((req, res) => {
+  (async function mongo() {
+    let client;
+    try {
+      client = await MongoClient.connect(DBUrl)
+      console.log(`${chalk.green(`Connected to DB $\{DBName}`)}`)
+      const db = client.db(DBName)
+      const response = await db.collection('books').insertMany(users)
+      res.json(response)
+    } catch (err) {
+      console.log(chalk.red('Database Offline'))
+      console.log(err.stack)
+    }
+  }())
+})
 app.use('/', router)
 app.use('/', (req, res) => {
   res.render('index', {
@@ -188,7 +212,12 @@ app.use('/', (req, res) => {
       {
         link: '/trip',
         title: 'Trips'
-      }]
+      },
+      {
+        link: '/admin',
+        title: 'Admin'
+      }
+    ]
   })
 })
 
