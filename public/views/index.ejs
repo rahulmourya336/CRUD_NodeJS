@@ -1,25 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Title</title>
+    <meta charset="UTF-8">
+    <title>Title</title>
 </head>
 <body>
-  <h1>This works!</h1>
+<h1>This works!</h1>
 
 <nav>
-  <div class="nav-wrapper">
-    <a href="#" class="brand-logo">90's Logo</a>
-    <ul id="nav-mobile" class="right hide-on-med-and-down">
-      <% for(let i = 0; i < nav.length; i++){ %>
-      <li>
-        <a href="<%=nav[i].link%>"><%=nav[i].title%></a>
-      </li>
-      <%}%>
-    </ul>
-  </div>
+    <div class="nav-wrapper">
+        <a href="#" class="brand-logo">90's Logo</a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <% for(let i = 0; i < nav.length; i++){ %>
+            <li>
+                <a href="<%= nav[i].link %>"><%= nav[i].title %></a>
+            </li>
+            <% } %>
+        </ul>
+    </div>
+    <form action="/auth/signup">
+        <input type="text" name="username" placeholder="Username">
+        <br/>
+        <input type="password" name="password" placeholder="Password">
+        <br/>
+        <button type="submit">Sign-up</button>
+    </form>
 </nav>
-
 
 
 </body>
