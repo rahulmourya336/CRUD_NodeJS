@@ -3,17 +3,15 @@
 const express = require('express')
 const chalk = require('chalk')
 const debug = require('debug')('app')
-const morgan = require('morgan')
-const db = require('./public/database/dbconnect')
+// const morgan = require('morgan')
 
 const path = require('path')
 const http = require('http')
 const _ = require('lodash')
 const bodyParser = require('body-parser')
+const cors = require('cors')
 
-const passport = require('passport')
 const cookieParser = require('cookie-parser')
-const session = require('express-session')
 const mongoose = require('mongoose')
 
 const router = express.Router()
@@ -25,23 +23,22 @@ const API = 'https://5b77ff72b859970014478529.mockapi.io/api/v1/'
 const PORT = process.env.PORT || 4100
 
 app.use(cookieParser())
-app.use(session({ secret: 'trip' }))
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({extended: false}))
+app.use(cors)
+// app.use(morgan('tiny'))
+app.use(express.static(path.join(__dirname, '/public')))
+app.set('views', './public/views')
+app.set('view engine', 'ejs')
+app.use('/auth', authRouter)
 // require('./public/config/passport.config')('app')
 
 
-app.use('/auth', authRouter)
-app.use(morgan('tiny'))
-app.use(express.static(path.join(__dirname, '/public')))
 app.use('/css', express.static(
-    path.join(__dirname, 'node_modules\materialize-css\dist\css')))
+    path.join(__dirname, 'node_modules\materialize-css\dist\css')
+))
 app.use('/js',
-    express.static(path.join(__dirname, 'node_modules\materialize-css\dist\js')))
-app.set('views', './public/views')
-app.set('view engine', 'ejs')
-
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: false }))
-
+    express.static(path.join(__dirname, 'node_modules\materialize-css\dist\js')));
 
 const users = [
     {
@@ -100,8 +97,8 @@ const trips = [
     }
 ]
 
-/* Database methods */
 
+/* Database methods */
 
 /* Method declaration */
 /* sign-in APIs */
@@ -113,8 +110,7 @@ app.post('/signin', (req, res) => {
     if (result !== -1) {
         res.send(`User found :\n ${JSON.stringify(users[result])}`);
         console.log('User Found');
-    }
-    else {
+    } else {
         res.send('User not found');
         console.log('User not found');
     }
@@ -123,18 +119,15 @@ app.post('/signin', (req, res) => {
 /* sign-up APIs */
 router.route('/users/:id').get((req, res) => {
     const id = req.params.id
-    const result = _.findIndex(users, {id: id});
+    const result = _.findIndex(users, {id});
     console.log(`Result output : ${result}`)
     if (result > -1) {
         res.send(users[result])
-    }
-    else {
+    } else {
         res.send('No resource found')
     }
 })
-router.route('/users').get((req, res) => {
-    res.send(users);
-})
+
 app.post('/users', (req, res) => {
     const body = req.body;
     const bodyLength = Object.keys(req.body).length;
@@ -157,8 +150,7 @@ app.post('/users', (req, res) => {
         // res.send('User added');
         mongoose.model('users', users)
         console.log(users)
-    }
-    else {
+    } else {
         res.send("Invalid Schema")
         console.log("Schema not correct");
     }
@@ -171,6 +163,14 @@ app.put('/users', (req, res) => {
 });
 // TODO: Complete PUT Request
 
+app.get('/users', (req, res) => {
+    console.log("App.get() Function")
+    const _user = mongoose.model('users', users);
+    _user.find({}, (err, data) => {
+        console.log(`>>>${data}`);
+        res.send(data);
+    })
+})
 /* Trip APIs */
 router.route('/trip').get((req, res) => {
     res.send(trips)
@@ -181,8 +181,7 @@ router.route('/trip/:id').get((req, res) => {
     console.log(`Result output : ${result}`)
     if (result > -1) {
         res.send(trips[result])
-    }
-    else {
+    } else {
         res.send('No resource found')
     }
 })
@@ -193,18 +192,26 @@ app.delete('/trip/:id', (req, res) => {
         console.log(`Del result : ${result}`)
         console.log(trips)
         res.send('Trip removed')
-    }
-    else {
+    } else {
         res.send('No trip found')
     }
 })
 
 router.route('/admin').get((req, res) => {
+    res.send("Admin route")
 })
 
 router.route('/admin/:id').get((req, res) => {
-
+    res.send("Admin/ID  route")
 })
+router.route('/users').get((req, res) => {
+    res.send("Users List");
+})
+
+router.route('/').get((req, res) => {
+    res.send('Home Page')
+})
+
 app.use('/', router)
 app.use('/', (req, res) => {
     res.render('index', {
@@ -225,11 +232,8 @@ app.use('/', (req, res) => {
     })
 })
 
-app.use('/users', (req, res) => {
-    res.send(`${API}/users`)
-})
+// require('./public/routes/userRoutes')(app);
 
-require('./public/routes/userRoutes')(app);
 
 app.listen(PORT, () => {
     console.log(`Listening on port ${chalk.green(PORT)}`)
