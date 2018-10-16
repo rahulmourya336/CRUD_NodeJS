@@ -21,6 +21,9 @@ const authRouter = require('./public/routes/authRouter')(Users);
 const trips = require('./public/models/TRIP_Models/trip_list');
 const tripRouter = require('./public/routes/tripRouter')(trips);
 
+const travellers = require('./public/models/TRIP_Models/trip_travellers');
+const travellerRouter = require('./public/routes/travellerRouter')(travellers);
+
 
 /* Variable Declaration */
 const app = express();
@@ -28,6 +31,7 @@ app.use(bodyParser());
 
 app.use(`${API_PREFIX}/auth`, authRouter);
 app.use(`${API_PREFIX}/trip`, tripRouter);
+app.use(`${API_PREFIX}/traveller`, travellerRouter);
 
 const PORT = process.env.PORT || 4500;
 
