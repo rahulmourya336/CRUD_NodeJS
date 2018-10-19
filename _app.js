@@ -29,6 +29,13 @@ const travellerRouter = require('./public/routes/travellerRouter')(travellers);
 const app = express();
 app.use(bodyParser());
 
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+    next();
+});
+
 app.use(`${API_PREFIX}/auth`, authRouter);
 app.use(`${API_PREFIX}/trip`, tripRouter);
 app.use(`${API_PREFIX}/traveller`, travellerRouter);

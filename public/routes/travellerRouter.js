@@ -25,7 +25,7 @@ function router(Travellers) {
   })
 
   travellerRouter.route('/:id')
-    .get(travellerController.getTravellerById())
+    .get(travellerController.getTravellerById)
     .delete(travellerController.deleteTravellerById);
   return travellerRouter
 }
