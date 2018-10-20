@@ -1,5 +1,7 @@
 /* eslint-disable no-trailing-spaces,indent */
+
 const mongoose = require('mongoose');
+
 const Schema = mongoose.Schema;
 
 const user = new Schema({
@@ -7,7 +9,7 @@ const user = new Schema({
     contact: Number,
     name: String,
     password: String,
-    status: Boolean
+    status: { type: Boolean, default: false },
 });
 
 const Users = mongoose.model('trip_user', user);

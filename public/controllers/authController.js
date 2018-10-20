@@ -10,31 +10,31 @@ const authController = function (Users) {
         err ? res.status(204).send(`No user found ${err}`) : res.status(200).send(users);
       });
     } else {
-      res.send('Do not abuse the API');
+      res.send('Invalid API Params');
     }
   };
   const signup = (req, res) => {
     console.log(req.body);
     const bodyLength = Object.keys(req.body).length;
     console.log(bodyLength);
-    if (bodyLength === 5) {
-      const newUser = new Users(req.body);
-      newUser.save((err) => {
-        // err ? res.send(err) : res.send('User added');
-        if (err) {
-          if (err.code === 11000) {
-            res.send('User already exist');
-          } else {
-            res.send(err);
-          }
+    // if (bodyLength === 5) {
+    const newUser = new Users(req.body);
+    newUser.save((err) => {
+      // err ? res.send(err) : res.send('User added');
+      if (err) {
+        if (err.code === 11000) {
+          res.json({status: 202, message: 'already exist'});
         } else {
-          res.status(201).send('User added');
+          res.json(404).end();
         }
-      });
-    } else {
-      res.send('Invalid Schema');
-      console.log('Schema not correct');
-    }
+      } else {
+        res.json({status: 201, message: 'user created'});
+      }
+    });
+    // } else {
+    //   res.send('Invalid Schema');
+    //   console.log('Schema not correct');
+    // }
   };
 
   return {
