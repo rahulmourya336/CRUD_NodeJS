@@ -23,12 +23,12 @@ const authController = function (Users) {
       // err ? res.send(err) : res.send('User added');
       if (err) {
         if (err.code === 11000) {
-          res.json({status: 202, message: 'already exist'});
+          res.json({ status: 202, message: 'already exist' });
         } else {
           res.json(404).end();
         }
       } else {
-        res.json({status: 201, message: 'user created'});
+        res.json({ status: 201, message: 'user created' });
       }
     });
     // } else {
