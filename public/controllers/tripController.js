@@ -1,22 +1,25 @@
 const tripController = function (Trips) {
-  const getTrip = (req, res) => {
-    Trips.find((err, users) => {
-      err ? res.status(204).send(`No Trip Found ${err}`) : res.status(200).send(users);
-    });
-  };
+    const getTrip = (req, res) => {
+        var ObjectId = require('mongoose').Types.ObjectId;
+        var query = {creatorID: new ObjectId(req.query.id)};
+        Trips.find(query, (err, users) => {
+            err ? res.status(400).json({ status: 400, message: err }) : res.status(200).json(users);
+        });
+    };
 
   const postTrip = (req, res) => {
     const newTrip = new Trips(req.body);
     console.log(req.body);
     newTrip.save((err) => {
-      err ? res.status(400).send(`Error: ${err}`) : res.send('Trip Created');
+      err ? res.status(400).json({ status: 400, message: err }) : res.status(201).json({ status: 201, message: 'Trip Created' });
     });
   };
 
   const getTripById = (req, res) => {
     const query = req.trips;
+    console.log('query', query);
     Trips.findById(query, (err, trips) => {
-      err ? res.send('No trip found') : res.send(trips);
+      err ? res.status(400).json({ status: 400, message: err }) : res.send(trips);
     });
   };
 

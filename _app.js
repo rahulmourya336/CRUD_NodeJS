@@ -9,6 +9,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
 
+const expressSession = require('express-session');
+
 const API_PREFIX = require('./public/config/APIVersion');
 
 
@@ -29,6 +31,14 @@ const travellerRouter = require('./public/routes/travellerRouter')(travellers);
 const app = express();
 app.use(bodyParser());
 
+app.set('trust proxy', 1); // trust first proxy
+app.use(expressSession({
+    secret: 'trip-app',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: true },
+}));
+
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
@@ -39,6 +49,7 @@ app.use((req, res, next) => {
 app.use(`${API_PREFIX}/auth`, authRouter);
 app.use(`${API_PREFIX}/trip`, tripRouter);
 app.use(`${API_PREFIX}/traveller`, travellerRouter);
+
 
 const PORT = process.env.PORT || 4500;
 

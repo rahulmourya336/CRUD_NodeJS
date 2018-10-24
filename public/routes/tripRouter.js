@@ -16,6 +16,7 @@ function router(Trips) {
   tripRouter.use('/:id', (req, res, next) => {
     Trips.findById(req.params.id, (err, trips) => {
       if (err) {
+        console.log('Error while fetching');
         res.status(304).send(err);
       } else if (trips) {
         req.trips = trips;
