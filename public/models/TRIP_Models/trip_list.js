@@ -10,6 +10,7 @@ const trip = new Schema({
     name: String,
     startDate: Date,
     url: String,
+    creation: { type: Date, default: new Date(), unique: true },
 });
 
 const trips = mongoose.model('trip_list', trip);

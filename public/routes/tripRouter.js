@@ -22,7 +22,7 @@ function router(Trips) {
         req.trips = trips;
         next();
       } else {
-        res.status(500).send('No Trips found')
+        res.status(500).send({ status: 500, message: 'No Trip Found' });
       }
     })
   })
